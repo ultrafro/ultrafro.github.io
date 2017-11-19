@@ -521,7 +521,7 @@ function grab(){
 	Listen 2 America - AR Talk Radio Explorer
 	<p id="infoDisplay">Station Info</p>
 
-	<input id="calibrate" type="button" value="clickme" onclick="grab();" />
+	<input id="calibrate" type="button" value="calibrate" onclick="grab();" />
 	<audio id="actual" controls>
 		<source id="player" src="http://ice8.securenetsystems.net/KBBR">
 <!-- 	  <source src="http://audio-mp3.ibiblio.org:8000/wcpe.mp3" type="audio/mpeg"> -->
@@ -600,13 +600,13 @@ function grab(){
 	     <a-plane position="0 0 0" rotation="-90 0 0" width=".1" height=".1" color="#7BC8A4"></a-plane>
 	</a-marker>
 
-	<a-sphere id="ball" position="0 .5 0" radius="0.5" color="#EF005E"></a-sphere>
+	<a-sphere id="ball" position="0 .5 0" radius="0.1" color="#0000ff"></a-sphere>
 
-	<a-plane id="debug" position="0 0 0" rotation="0 0 0" width="1" height="1" color="#7BC800">
-		 <!-- <a-sphere position="0 .8 0" id="sphereFriend" radius="0.5" color="#1F2D5E"></a-sphere> -->
-		 <a-entity id="h" position="14.20000000000002 0 6.810" rotation="0 90 0" scale="0.1532 0.1532 0.1532" visible="true"></a-entity>
-<!-- 		 <a-plane id="h" position="0 0 0" rotation="0 0 0" width="1" height="1" color="#7BC800"> -->
-	</a-plane>
+	<a-entity id="debug" position="0 0 0" rotation="0 0 0">
+<a-entity id="h" position="14.20000000000002 0 6.810" rotation="0 90 0" scale="0.1532 0.1532 0.1532" visible="true"></a-entity>
+<!-- 	<a-plane id="debug" position="0 0 0" rotation="0 0 0" width="1" height="1" color="#7BC800">
+	</a-plane> -->
+	</a-entity>
 
 
 <a-entity camera id="mainCam"></a-entity>
