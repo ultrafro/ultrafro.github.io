@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<script src="vendor/aframe.min.js"></script>
+<!-- include aframe-artoolkit -->
+<script src="aframe-ar.js"></script>
+<script src="stations.js"></script>
+<script src="https://rawgit.com/mayognaise/aframe-mouse-cursor-component/master/dist/aframe-mouse-cursor-component.min.js"></script>
+<script>
+window.addEventListener( 'mousemove', onMouseMove, false );
+window.addEventListener( 'resize', onWindowResize, false);
+window.addEventListener( 'click', onMouseClick, false);
+
+
+
+
+var mouse = new THREE.Vector2();
+var mouseVector = new THREE.Vector3();
+var projector = new THREE.Projector();
+var raycaster = new THREE.Raycaster();
+var cam;
+function onMouseMove( event ) {
+	// calculate mouse position in normalized device coordinates
+	// (-1 to +1) for both components
+	mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+	mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+	//console.log("mouse x: " + mouse.x + " mouse y: " + mouse.y);
+
+
+	mouseVector = new THREE.Vector3(
+        ( event.clientX / window.innerWidth ) * 2 - 1,
+      - ( event.clientY / window.innerHeight ) * 2 + 1,
+        1 );
+        
+}
+
+function onWindowResize(){
+	/*
+	cam.components.camera.camera.aspect = window.innerwidth/window.innerHeight;
+	cam.components.camera.camera.updateProjectionMatrix();
+	console.log("resisizing!");
+	*/
+}
+
+function onMouseClick(){
+	//find the one closest to the mouse click....
+
+
+	raycaster.setFromCamera(mouse,cam.components.camera.camera);
+	var intersects = raycaster.intersectObject(collider);
+	var point = intersects[0].point;
+
+	var dist = new Array();
+	for(var i = 0; i<stationList.length; i++){
+		var worldPos = new THREE.Vector3();
+		worldPos.setFromMatrixPosition(stationList[i].object3D.matrixWorld);
+
+		dist.push(point.distanceTo(worldPos));
+	}
+	//console.log("dist length: " + dist.length);
+
+	//console.log("click point: " + point.x + " " + point.y + " " + point.z);
+	//console.dir(dist);
+	//find minimum index. ugh why doesn't javascript have a functions to do this!?!?!?!
+	var idx = 0;
+	var minimum = dist[idx];
+	for(var i =0; i<dist.length; i++){
+		//console.log("dist of i: " + dist[i] + " minimum: " + minimum);
+		if(dist[i]<minimum){
+			idx = i;
+			minimum = dist[i];
+		}
+	}
+
+	//console.log("minimum index: " + idx);
+
+	for(var i =0; i<stationList.length; i++){
+		stationList[i].setAttribute('material', 'color','yellow');
+	}
+	stationList[idx].setAttribute('material', 'color','red');
+
+	playURL(station[idx]['link'])
+
+}
+
+
+function playURL(link){
+	console.log('playing link: ' + link);
+	var radio = document.getElementById('actual');
+	var player = document.getElementById('player');
+
+	radio.pause();
+	player.src = link;
+	radio.load();
+	radio.play();
+}
+
+
+
+var templateString = [{"x":-4.981832504272461,"y":3.0595836639404297,"z":-15.962874412536621,"xa":1.560009789134662,"ya":0.2875940203459235,"za":0.4359304990894609},{"x":-0.17962025105953217,"y":3.017847776412964,"z":-15.133286476135254,"xa":1.465792041313952,"ya":0.004820363058001623,"za":0.11642758272708208},{"x":-4.888526439666748,"y":-1.5771149396896362,"z":-15.876949310302734,"xa":1.5119210689220588,"ya":2.7447691698508483,"za":2.8480322782431626},{"x":4.124181270599365,"y":3.042928457260132,"z":-15.133901596069336,"xa":1.4328003496109567,"ya":0.046258714713855675,"za":-0.06058143210772059},{"x":2.1070749759674072,"y":1.0423558950424194,"z":-15.112184524536133,"xa":1.4576342713476842,"ya":2.855985327567412,"za":3.1066892523658236},{"x":-2.1632230281829834,"y":0.821200966835022,"z":-15.165510177612305,"xa":1.5119991195800826,"ya":0.10351166237183351,"za":0.2528785241251046},{"x":-0.13547497987747192,"y":-1.4906989336013794,"z":-15.283432006835938,"xa":1.4750859510599592,"ya":2.860811575274601,"za":2.9891883256696508},{"x":4.203556537628174,"y":-1.4355984926223755,"z":-15.362940788269043,"xa":1.4769833231742335,"ya":3.1346160176733653,"za":3.0637702480744533}];
+
+var centerPosition = new THREE.Vector3();
+var centerQuaternion = new THREE.Quaternion();
+var centerRotation = new THREE.Vector3();
+var centerObject = new THREE.Object3D();
+var loader = new THREE.OBJLoader();
+
+
+function calculateCenter(){
+	var avgX = 0;
+  	var avgY = 0;
+  	var avgZ = 0;
+  	var avgXa = 0;
+  	var avgYa = 0;
+  	var avgZa = 0;
+	for(var i = 0; i<templateString.length; i++){
+		avgX = avgX + templateString[i]["x"]/templateString.length;
+		avgY = avgY + templateString[i]["y"]/templateString.length;
+		avgZ = avgZ + templateString[i]["z"]/templateString.length;
+		avgXa = avgXa + templateString[i]["xa"]/templateString.length;
+		avgYa = avgYa + templateString[i]["ya"]/templateString.length;
+		avgZa = avgZa + templateString[i]["za"]/templateString.length;
+	}
+
+	centerPosition.set(avgX,avgY,avgZ);
+	centerRotation.set(avgXa,avgYa,avgZa);
+	centerObject.position.set(avgX,avgY,avgZ);
+	centerObject.rotation.set(avgXa,avgYa,avgZa);
+	centerObject.updateMatrixWorld();
+
+}
+
+function dump(object){
+	//console.log(object.position);
+	console.log(JSON.parse(JSON.stringify(object.position)));
+	console.log(JSON.parse(JSON.stringify(object.rotation)));
+
+	//console.log(JSON.stringify(clone.position));
+	//console.log(JSON.stringify(clone.position));
+}
+
+function localObject(parent, child){
+	var childClone = child.clone();
+	parent.updateMatrixWorld();
+	childClone.updateMatrixWorld();
+	childClone.applyMatrix(new THREE.Matrix4().getInverse(parent.matrixWorld));
+	childClone.updateMatrixWorld();
+	return childClone;
+}
+
+
+function correctPosition(original, center, newObject){
+	var correctObject = newObject.clone();
+
+	//console.dir(center);
+	var local = localObject(original, center);
+	local.updateMatrixWorld();
+	correctObject.updateMatrixWorld();
+
+	var world = correctObject.matrixWorld.clone();
+	correctObject.applyMatrix(new THREE.Matrix4().getInverse(world));
+  	correctObject.applyMatrix(local.matrix);
+  	correctObject.applyMatrix(world);
+  	correctObject.updateMatrixWorld();
+  	return correctObject;
+
+  	//console.dir(correctObject);
+
+}
+
+var stationList = [];
+var meshList = [];
+var collider = null;
+var ball = null;
+
+AFRAME.registerComponent('gamecontroller', {
+  
+  init: function () {
+  	cam = document.querySelector('#mainCam');
+  	cam.components.camera.camera.near = 1;
+  	cam.components.camera.camera.near = 1;
+  	console.dir(cam);
+  	console.log("starting!");
+  	calculateCenter();
+
+  	console.log("station list: ");
+  	console.log(station.length);
+
+	var holderEl = document.querySelector('#h'); 
+	ball = document.querySelector('#ball'); 
+
+	var colliderPlaneEl = document.createElement('a-entity');
+	var geometry = new THREE.BoxGeometry(1000,0.0001,1000);
+	var material = new THREE.MeshBasicMaterial( {color: 0xffff00});
+	material.transparent = true;
+	material.opacity = 0.0;
+	var cube = new THREE.Mesh(geometry,material);
+	//cube.material.transparent = true;
+
+	colliderPlaneEl.setObject3D('mesh',cube);
+	collider = cube;
+	holderEl.appendChild(colliderPlaneEl);
+
+  	for(var i = 0; i<station.length; i++){
+
+  		//var stationEl = document.createElement('a-entity');
+  		//stationEl.setAttribute('obj-model','obj: #tree-obj');
+  		//stationEl.setAttribute('position',{x:station[i]['lat'],y:0,z:station[i]['lon']});
+
+  		var stationBaseEl = document.createElement('a-entity');
+		var geometry = new THREE.CylinderGeometry( 5, 5, 1, 8 );
+		var material = new THREE.MeshBasicMaterial( {color: 0xffff00} );
+		var cylinder = new THREE.Mesh( geometry, material );
+		stationBaseEl.setObject3D('mesh',cylinder);
+
+
+  		stationBaseEl.setAttribute('position',{x:station[i]['lat'],y:0,z:station[i]['lon']});
+
+  		stationList.push(stationBaseEl);
+  		meshList.push(cylinder);
+  		/*
+  		stationBaseEl.addEventListener('click', function () {
+		  this.setAttribute('material', 'color', 'red');
+		  console.log('I was clicked!');
+		});
+		*/
+
+  		//console.dir(station[i]);
+  		holderEl.appendChild(stationBaseEl);
+
+
+  	}
+
+
+  	//use this one!
+  	/*
+  	var test1 = document.querySelector('#test1');
+  	var test2 = document.querySelector('#test2');
+
+  	console.log("test1 position: ");
+  	dump(test1.object3D);
+  	console.log("test2 position: ");  	
+  	dump(test2.object3D);
+
+  	var test3 = new THREE.Object3D();
+  	test3.position.x = -47;
+  	test3.position.y = 0;
+  	test3.position.z = 0;
+  	test3.rotation.set(0,3.14/2,0);
+  	test3.rotation.set(0,0,0);
+  	test3.updateMatrixWorld();
+
+  	console.log("test3 position: ");
+  	dump(test3);
+
+  	var correct = correctPosition(test1.object3D,test2.object3D,test3);
+  	console.log("fixed: ");
+  	dump(correct);
+  	*/
+
+  },
+
+  tick: function (time, timeDelta) {
+  	//console.log("tick! " + time);
+
+
+  	//handle intersection:
+
+
+  	//mouseVector.unproject(cam.components.camera.camera);
+  	//projector.unprojectVector(mouseVector,cam.components.camera.camera);
+  	//raycaster = new THREE.Raycaster(cam.components.camera.camera.position, mouseVector.sub(cam.components.camera.camera.position).normalize(),true);
+
+
+
+	
+  	raycaster.setFromCamera(mouse,cam.components.camera.camera);
+  	
+
+  	//console.dir(cam.components.camera.camera);
+  	var stationObjectList = [];
+  	//console.log('mouse x: ' + mouse.x + " mouse y: " + mouse.y);
+  	/*
+  	for(var i = 0; i<stationList.length; i++){
+  		stationObjectList.push(stationList[i].object3D);
+  		if(stationList[i].object3D instanceof THREE.Mesh){
+			console.log("bang!");
+		}
+  	}
+  	*/
+  	//console.log(stationObjectList.length);
+//  	var intersects = raycaster.intersectObjects(stationObjectList);
+  	//var intersects = raycaster.intersectObjects(meshList);
+  	var intersects = raycaster.intersectObject(collider);
+  	//console.log("intersect length: " + intersects.length);
+  	for(var i = 0; i<intersects.length; i++){
+  		ball.setAttribute('position',{x: intersects[i].point.x,y: intersects[i].point.y,z: intersects[i].point.z})
+  		//console.dir(intersects[i]);
+  		//intersects[i].object.el.setAttribute('material', 'color','red');
+  		//intersects[i].material.color.set(0xff0000);
+  		//console.log(meshList[i].el + " i was highlighted");
+  	}
+
+
+
+  	var debug = document.querySelector('#debug');
+
+
+
+
+  	var avgX = 0;
+  	var avgY = 0;
+  	var avgZ = 0;
+  	var avgXa = 0;
+  	var avgYa = 0;
+  	var avgZa = 0;
+  	//look through each marker
+	var markerList = document.querySelectorAll('a-marker');
+	var markerCount = 0;
+	for(i = 0; i<markerList.length; i++){
+		if(markerList[i].object3D.visible){
+			markerCount = markerCount + 1;
+
+			var original = new THREE.Object3D();
+			original.position.set(templateString[i]["x"],templateString[i]["y"],templateString[i]["z"]);
+			original.rotation.set(templateString[i]["xa"],templateString[i]["ya"],templateString[i]["za"]);
+			original.updateMatrixWorld();
+			var correct = correctPosition(original,centerObject,markerList[i].object3D);
+
+			var proposedX = correct.position.x;
+			var proposedY = correct.position.y;
+			var proposedZ = correct.position.z;
+			
+			avgX = avgX + proposedX;
+			avgY = avgY + proposedY;
+			avgZ = avgZ + proposedZ;
+			//avgXa = avgXa + markerList[i].object3D.rotation.x;
+			//avgYa = avgYa + markerList[i].object3D.rotation.y;
+			//avgZa = avgZa + markerList[i].object3D.rotation.z;	
+			
+			//avgXa =  markerList[i].object3D.rotation.x*180/3014;
+			//avgYa =  markerList[i].object3D.rotation.y*180/3.14;
+			//avgZa =  markerList[i].object3D.rotation.z*180/3.14;	
+			
+			//avgXa =  markerList[i].object3D.rotation.x*180/3.14;
+			//avgYa =  markerList[i].object3D.rotation.y*180/3.14;
+			//avgZa =  markerList[i].object3D.rotation.z*180/3.14;	
+
+			avgXa =  markerList[i].object3D.rotation.x;
+			avgYa =  markerList[i].object3D.rotation.y;
+			avgZa =  markerList[i].object3D.rotation.z;	
+		}
+	}
+
+	if(markerCount > 0 ){
+		avgX = avgX / markerCount;
+		avgY = avgY / markerCount;
+		avgZ = avgZ / markerCount;
+
+		//avgXa = avgXa / markerCount;
+		//avgYa = avgYa / markerCount;
+		//avgZa = avgZa / markerCount;
+
+		debug.setAttribute('position',{x: avgX, y: avgY, z: avgZ});
+		//debug.object3D.rotation.set(avgXa,avgYa,avgZa);
+
+		//debug.object3D.position.set(markerList[0].object3D.position.x,markerList[0].object3D.position.y,markerList[0].object3D.position.z);
+		//debug.object3D.quaternion = markerList[0].object3D.quaternion.clone();
+		
+
+
+		var rot = markerList[0].object3D.rotation.clone();
+		debug.object3D.rotation.set(rot.x-.001,rot.y,rot.z);
+
+
+		//debug.object3D.rotation.set(markerList[0].object3D.rotation.x,markerList[0].object3D.rotation.y,markerList[0].object3D.rotation.z);
+		//debug.object3D.rotation.set(0,0,0);
+		//debug.object3D.updateMatrixWorld();
+
+		//debug.setAttribute('rotation',markerList[0].getAttribute('rotation'));
+
+
+		//debug.object3D.rotation.set(markerList[0].object3D.rotation.x,markerList[0].object3D.rotation.y,markerList[0].object3D.rotation.z);
+		debug.object3D.updateMatrixWorld();
+
+		//dump(markerList[0].object3D);
+		//dump(debug.object3D);
+
+		//console.dir(markerList[0].getAttribute('rotation'));
+
+		//debug.setAttribute('rotation',{x: avgXa, y: avgYa, z: avgZa});
+	}
+
+
+
+  }
+
+});
+
+
+/*
+var sceneEl = document.querySelector('a-scene');
+var entityEl = document.createElement('a-entity');
+entityEl.setAttribute('geometry', {
+	  primitive: 'box',
+	  height: 1,
+	  width: 1
+});
+sceneEl.appendChild(entityEl);
+*/
+
+
+//entityEl.setAttribute('position', {x: avgX, y: avgY, z: avgZ});
+//entityEl.setAttribute('rotation', {x: avgXa, y: avgYa, z: avgZa});
+//entityEl.setAttribute('rotation', {x: markerList[0].object3D.rotation.x, y: markerList[0].object3D.rotation.y, z: markerList[0].object3D.rotation.z});
+
+//console.dir(entityEl.getAttribute('position'));
+//console.dir(entityEl.getAttribute('rotation'));
+
+
+
+
+//sceneEl.object3D.visible
+function grab(){
+	var markerList = document.querySelectorAll('a-marker');
+	console.log("number of markers: ");
+	console.log(markerList.length);
+
+	var templateList = [];
+	for(i = 0; i<markerList.length; i++){
+		var pos = markerList[i].object3D.position;
+		templateList[i] = {};
+		templateList[i]['x'] = markerList[i].object3D.position.x;
+		templateList[i]['y'] = markerList[i].object3D.position.y;
+		templateList[i]['z'] = markerList[i].object3D.position.z;
+		templateList[i]['xa'] = markerList[i].object3D.rotation.x;
+		templateList[i]['ya'] = markerList[i].object3D.rotation.y;
+		templateList[i]['za'] = markerList[i].object3D.rotation.z;
+ 		console.log("marker: " + i + " " + pos.x);
+	}
+
+	console.dir(templateList);
+	console.dir(JSON.stringify(templateList));
+
+	//put something at the average location
+	var avgX = 0;
+	var avgY = 0;
+	var avgZ = 0;
+	var avgXa = 0;
+	var avgYa = 0;
+	var avgZa = 0;
+
+	for(i = 1; i<markerList.length; i++){
+		
+		avgX = avgX + markerList[i].object3D.position.x / markerList.length;
+		avgY = avgY + markerList[i].object3D.position.y / markerList.length;
+		avgZ = avgZ + markerList[i].object3D.position.z / markerList.length;
+
+		avgXa = avgXa + markerList[i].object3D.rotation.x / markerList.length;
+		avgYa = avgYa + markerList[i].object3D.rotation.y / markerList.length;
+		avgZa = avgZa + markerList[i].object3D.rotation.z / markerList.length;
+
+		//console.log("avgX: " + avgX);
+	}
+
+	console.log(templateString);
+
+
+	console.log("original x: " + markerList[0].object3D.position.x + " new x: " + avgX);
+	console.log("avg position: " + avgX + " " + avgY + " " + avgZ);
+	console.dir("avg rotation: " + avgXa + " " + avgYa + " " + avgZa);
+	console.log("second x: " + markerList[1].object3D.position.x);
+
+
+
+
+
+}
+
+</script>
+
+<body style='margin : 0px; overflow: hidden; font-family: Monospace;'>
+
+<div style='position: fixed; top: 10px; width:inherit; text-align: center; z-index: 1;'>
+	<a href="https://github.com/jeromeetienne/AR.js/" target="_blank">AR.js</a> - example for a-frame
+	<br/>
+	Contact me any time at <a href='https://twitter.com/jerome_etienne' target='_blank'>@jerome_etienne</a>
+	<input id="clickMe" type="button" value="clickme" onclick="grab();" />
+	<audio id="actual" controls>
+		<source id="player" src="http://ice8.securenetsystems.net/KBBR">
+<!-- 	  <source src="http://audio-mp3.ibiblio.org:8000/wcpe.mp3" type="audio/mpeg"> -->
+<!-- 	  <source src="http://audio-ogg.ibiblio.org:8000/wcpe.ogg" type="audio/ogg"> -->
+	</audio>
+</div>
+
+
+	<!-- <a-scene embedded artoolkit='sourceType: image; sourceUrl:../../data/images/armchair.jpg;'> -->
+
+
+
+
+	<a-scene gamecontroller embedded artoolkit='sourceType: webcam; detectionMode: mono_and_matrix; matrixCodeType: 3x3;'>
+
+	<a-assets>
+	    <a-asset-item id="tree-obj" src="antenna.obj"></a-asset-item>
+  	</a-assets>
+
+
+	<a-sphere id="anchor" position="0 .5 0" radius="0.5" color="#000000">
+		
+	</a-sphere>
+
+
+	<a-sphere id="test1" position="0 1 0" rotation="0 10 0" radius="0.5" color="#000000">
+		
+	</a-sphere>
+
+	<a-sphere id="test2" position="0 2 0" radius="0.5" color="#000000">
+		
+	</a-sphere>
+
+
+
+
+
+	<a-marker type='barcode' value='0'>
+	     <a-sphere position="0 .5 0" radius="0.5" color="#EF2D5E"></a-sphere>
+	     <a-plane position="0 0 0" rotation="-90 0 0" width="1" height="1" color="#7BC8A4"></a-plane>
+	</a-marker>
+
+		<a-marker type='barcode' value='1'>
+	     <a-sphere position="0 .5 0" radius="0.5" color="#EF2D5E"></a-sphere>
+	     <a-plane position="0 0 0" rotation="-90 0 0" width="1" height="1" color="#7BC8A4"></a-plane>
+	</a-marker>
+
+		<a-marker type='barcode' value='2'>
+	     <a-sphere position="0 .5 0" radius="0.5" color="#EF2D5E"></a-sphere>
+	     <a-plane position="0 0 0" rotation="-90 0 0" width="1" height="1" color="#7BC8A4"></a-plane>
+	</a-marker>
+
+		<a-marker type='barcode' value='3'>
+	     <a-sphere position="0 .5 0" radius="0.5" color="#EF2D5E"></a-sphere>
+	     <a-plane position="0 0 0" rotation="-90 0 0" width="1" height="1" color="#7BC8A4"></a-plane>
+	</a-marker>
+
+		<a-marker type='barcode' value='4'>
+	     <a-sphere position="0 .5 0" radius="0.5" color="#EF2D5E"></a-sphere>
+	     <a-plane position="0 0 0" rotation="-90 0 0" width="1" height="1" color="#7BC8A4"></a-plane>
+	</a-marker>
+
+		<a-marker type='barcode' value='5'>
+	     <a-sphere position="0 .5 0" radius="0.5" color="#EF2D5E"></a-sphere>
+	     <a-plane position="0 0 0" rotation="-90 0 0" width="1" height="1" color="#7BC8A4"></a-plane>
+	</a-marker>
+
+		<a-marker type='barcode' value='6'>
+	     <a-sphere position="0 .5 0" radius="0.5" color="#EF2D5E"></a-sphere>
+	     <a-plane position="0 0 0" rotation="-90 0 0" width="1" height="1" color="#7BC8A4"></a-plane>
+	</a-marker>
+
+
+	<a-marker type='barcode' value='7'>
+	     <a-sphere position="0 .5 0" radius="0.5" color="#EF2D5E"></a-sphere>
+	     <a-plane position="0 0 0" rotation="-90 0 0" width="1" height="1" color="#7BC8A4"></a-plane>
+	</a-marker>
+
+	<a-sphere id="ball" position="0 .5 0" radius="0.5" color="#EF005E"></a-sphere>
+
+	<a-plane id="debug" position="0 0 0" rotation="0 0 0" width="1" height="1" color="#7BC800">
+		 <a-sphere position="0 .8 0" id="sphereFriend" radius="0.5" color="#1F2D5E"></a-sphere>
+		 <a-entity id="h" position="14.550000000000002 0 4.39" rotation="0 90 0" scale="0.1532 0.1532 0.1532" visible="true"></a-entity>
+<!-- 		 <a-plane id="h" position="0 0 0" rotation="0 0 0" width="1" height="1" color="#7BC800"> -->
+	</a-plane>
+
+
+<a-entity camera id="mainCam"></a-entity>
+
+<!-- <a-entity camera look-controls mouse-cursor></a-entity> -->
+<!-- 		<a-sphere position="0 0.5 0" radius="0.5" color="#EF2D5E"></a-sphere>
+		<a-plane position="0 0 0" rotation="-90 0 0" width="1" height="1" color="#7BC8A4"></a-plane> -->
+	</a-scene>
+
+
+<!-- 	<a-scene embedded artoolkit='sourceType: webcam;'>
+
+		<a-sphere position="0 0.5 0" radius="0.5" color="#EF2D5E"></a-sphere>
+		<a-plane position="0 0 0" rotation="-90 0 0" width="1" height="1" color="#7BC8A4"></a-plane>
+
+		<a-marker-camera preset='hiro'></a-marker-camera>
+	</a-scene> -->
+</body>
+</html>
