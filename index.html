@@ -73,11 +73,25 @@ function onMouseClick(){
 	//console.log("minimum index: " + idx);
 
 	for(var i =0; i<stationList.length; i++){
-		stationList[i].setAttribute('material', 'color','yellow');
+		stationList[i].setAttribute('material', 'color','grey');
+		stationList[i].setAttribute('scale', {x: 1.0, y: 1.0, z: 1.0});
+		var pos = stationList[i].getAttribute('position');
+		pos.y = 0;
+		stationList[i].setAttribute('position', pos);
+
+		stationList[i].components.material.material.polygonOffset = false;
+		stationList[i].components.material.material.polygonOffsetFactor = 0.0;
 	}
-	stationList[idx].setAttribute('material', 'color','red');
+	stationList[idx].setAttribute('material', 'color','green');
+	var pos = stationList[idx].getAttribute('position');
+	pos.y = pos.y+2;
+	stationList[idx].setAttribute('position', pos);
+	stationList[idx].setAttribute('scale', {x: 1.0, y: 5.0, z: 1.0});
+	stationList[idx].components.material.material.polygonOffset = true;
+	stationList[idx].components.material.material.polygonOffsetFactor = -1.0;
 
 	playURL(station[idx]['link'])
+	document.getElementById('infoDisplay').textContent = station[idx]["call"] + "-" + station[idx]["band"] + "-" + station[idx]["freq"];
 
 }
 
@@ -95,7 +109,10 @@ function playURL(link){
 
 
 
-var templateString = [{"x":-4.981832504272461,"y":3.0595836639404297,"z":-15.962874412536621,"xa":1.560009789134662,"ya":0.2875940203459235,"za":0.4359304990894609},{"x":-0.17962025105953217,"y":3.017847776412964,"z":-15.133286476135254,"xa":1.465792041313952,"ya":0.004820363058001623,"za":0.11642758272708208},{"x":-4.888526439666748,"y":-1.5771149396896362,"z":-15.876949310302734,"xa":1.5119210689220588,"ya":2.7447691698508483,"za":2.8480322782431626},{"x":4.124181270599365,"y":3.042928457260132,"z":-15.133901596069336,"xa":1.4328003496109567,"ya":0.046258714713855675,"za":-0.06058143210772059},{"x":2.1070749759674072,"y":1.0423558950424194,"z":-15.112184524536133,"xa":1.4576342713476842,"ya":2.855985327567412,"za":3.1066892523658236},{"x":-2.1632230281829834,"y":0.821200966835022,"z":-15.165510177612305,"xa":1.5119991195800826,"ya":0.10351166237183351,"za":0.2528785241251046},{"x":-0.13547497987747192,"y":-1.4906989336013794,"z":-15.283432006835938,"xa":1.4750859510599592,"ya":2.860811575274601,"za":2.9891883256696508},{"x":4.203556537628174,"y":-1.4355984926223755,"z":-15.362940788269043,"xa":1.4769833231742335,"ya":3.1346160176733653,"za":3.0637702480744533}];
+//var templateString = [{"x":-4.981832504272461,"y":3.0595836639404297,"z":-15.962874412536621,"xa":1.560009789134662,"ya":0.2875940203459235,"za":0.4359304990894609},{"x":-0.17962025105953217,"y":3.017847776412964,"z":-15.133286476135254,"xa":1.465792041313952,"ya":0.004820363058001623,"za":0.11642758272708208},{"x":-4.888526439666748,"y":-1.5771149396896362,"z":-15.876949310302734,"xa":1.5119210689220588,"ya":2.7447691698508483,"za":2.8480322782431626},{"x":4.124181270599365,"y":3.042928457260132,"z":-15.133901596069336,"xa":1.4328003496109567,"ya":0.046258714713855675,"za":-0.06058143210772059},{"x":2.1070749759674072,"y":1.0423558950424194,"z":-15.112184524536133,"xa":1.4576342713476842,"ya":2.855985327567412,"za":3.1066892523658236},{"x":-2.1632230281829834,"y":0.821200966835022,"z":-15.165510177612305,"xa":1.5119991195800826,"ya":0.10351166237183351,"za":0.2528785241251046},{"x":-0.13547497987747192,"y":-1.4906989336013794,"z":-15.283432006835938,"xa":1.4750859510599592,"ya":2.860811575274601,"za":2.9891883256696508},{"x":4.203556537628174,"y":-1.4355984926223755,"z":-15.362940788269043,"xa":1.4769833231742335,"ya":3.1346160176733653,"za":3.0637702480744533}]; //original one
+
+
+var templateString = [{"x":-2.3543813228607178,"y":2.837900400161743,"z":-18.522764205932617,"xa":1.5488015365132992,"ya":-0.05546292727782609,"za":-0.025166226692366914},{"x":2.399228811264038,"y":2.883820056915283,"z":-18.634248733520508,"xa":1.5607835424612377,"ya":2.809979227765901,"za":2.7727322519409885},{"x":-2.319291353225708,"y":-1.745421051979065,"z":-18.09663963317871,"xa":1.4550471861257552,"ya":0.09554499162469506,"za":0.0965564743566795},{"x":6.592453956604004,"y":2.8543636798858643,"z":-18.1569766998291,"xa":1.5516531675192324,"ya":0.1761645405449943,"za":0.1247520974847335},{"x":4.648006439208984,"y":0.8479713201522827,"z":-18.219785690307617,"xa":1.4197632449101667,"ya":0.07587658307303617,"za":-0.0009693613589314165},{"x":0.35865405201911926,"y":0.6388152241706848,"z":-17.893999099731445,"xa":1.5129202258772463,"ya":2.8446447446904446,"za":3.0091220515706074},{"x":2.414393901824951,"y":-1.673930287361145,"z":-18.004819869995117,"xa":1.4723821816274139,"ya":0.019453434123994265,"za":0.3971353669964686},{"x":6.778834819793701,"y":-1.6439540386199951,"z":-18.165130615234375,"xa":1.4164645868017693,"ya":0.02844841053255311,"za":0.0031916747197174296}] //from 3:40am
 
 var centerPosition = new THREE.Vector3();
 var centerQuaternion = new THREE.Quaternion();
@@ -175,8 +192,10 @@ AFRAME.registerComponent('gamecontroller', {
   
   init: function () {
   	cam = document.querySelector('#mainCam');
-  	cam.components.camera.camera.near = 1;
-  	cam.components.camera.camera.near = 1;
+  	cam.components.camera.camera.near = 100;
+  	cam.components.camera.camera.far = 1000;
+  	cam.components.camera.camera.updateProjectionMatrix();
+  	//cam.components.camera.camera.near = 1;
   	console.dir(cam);
   	console.log("starting!");
   	calculateCenter();
@@ -206,13 +225,24 @@ AFRAME.registerComponent('gamecontroller', {
   		//stationEl.setAttribute('position',{x:station[i]['lat'],y:0,z:station[i]['lon']});
 
   		var stationBaseEl = document.createElement('a-entity');
-		var geometry = new THREE.CylinderGeometry( 5, 5, 1, 8 );
-		var material = new THREE.MeshBasicMaterial( {color: 0xffff00} );
+		var geometry = new THREE.CylinderGeometry( 2, 2, .2, 8 );
+		var material = new THREE.MeshLambertMaterial( {color: 'grey'} );
 		var cylinder = new THREE.Mesh( geometry, material );
 		stationBaseEl.setObject3D('mesh',cylinder);
 
 
   		stationBaseEl.setAttribute('position',{x:station[i]['lat'],y:0,z:station[i]['lon']});
+
+  		var antennaEl = document.createElement('a-entity');
+  		antennaEl.setAttribute('obj-model','obj: #tree-obj');
+  		antennaEl.setAttribute('scale',{x:0.4,y:0.4,z:0.4});
+
+  		/*
+  		var textEl = document.createElement('a-entity');
+  		textEl.setAttribute('text','dopesauce');
+  		textEl.setAttribute('position',{x:0,y:0.3,z:0});
+		*/
+  		//antennaEl.setAttribute('obj-model','obj: #tree-obj');
 
   		stationList.push(stationBaseEl);
   		meshList.push(cylinder);
@@ -225,7 +255,8 @@ AFRAME.registerComponent('gamecontroller', {
 
   		//console.dir(station[i]);
   		holderEl.appendChild(stationBaseEl);
-
+  		stationBaseEl.appendChild(antennaEl);
+  		//stationBaseEl.appendChild(textEl);
 
   	}
 
@@ -260,8 +291,8 @@ AFRAME.registerComponent('gamecontroller', {
 
   tick: function (time, timeDelta) {
   	//console.log("tick! " + time);
-
-
+	cam.components.camera.camera.near = 1;
+	cam.components.camera.camera.near = 100;
   	//handle intersection:
 
 
@@ -329,9 +360,16 @@ AFRAME.registerComponent('gamecontroller', {
 			var proposedY = correct.position.y;
 			var proposedZ = correct.position.z;
 			
+			
 			avgX = avgX + proposedX;
 			avgY = avgY + proposedY;
 			avgZ = avgZ + proposedZ;
+			
+
+			//avgX =  proposedX;
+			//avgY =  proposedY;
+			//avgZ =  proposedZ;
+
 			//avgXa = avgXa + markerList[i].object3D.rotation.x;
 			//avgYa = avgYa + markerList[i].object3D.rotation.y;
 			//avgZa = avgZa + markerList[i].object3D.rotation.z;	
@@ -480,10 +518,10 @@ function grab(){
 <body style='margin : 0px; overflow: hidden; font-family: Monospace;'>
 
 <div style='position: fixed; top: 10px; width:inherit; text-align: center; z-index: 1;'>
-	<a href="https://github.com/jeromeetienne/AR.js/" target="_blank">AR.js</a> - example for a-frame
-	<br/>
-	Contact me any time at <a href='https://twitter.com/jerome_etienne' target='_blank'>@jerome_etienne</a>
-	<input id="clickMe" type="button" value="clickme" onclick="grab();" />
+	Listen 2 America - AR Talk Radio Explorer
+	<p id="infoDisplay">Station Info</p>
+
+	<input id="calibrate" type="button" value="clickme" onclick="grab();" />
 	<audio id="actual" controls>
 		<source id="player" src="http://ice8.securenetsystems.net/KBBR">
 <!-- 	  <source src="http://audio-mp3.ibiblio.org:8000/wcpe.mp3" type="audio/mpeg"> -->
@@ -522,51 +560,51 @@ function grab(){
 
 
 	<a-marker type='barcode' value='0'>
-	     <a-sphere position="0 .5 0" radius="0.5" color="#EF2D5E"></a-sphere>
-	     <a-plane position="0 0 0" rotation="-90 0 0" width="1" height="1" color="#7BC8A4"></a-plane>
+	     <!-- <a-sphere position="0 .5 0" radius="0.5" color="#EF2D5E"></a-sphere> -->
+	     <a-plane position="0 0 0" rotation="-90 0 0" width=".1" height=".1" color="#7BC8A4"></a-plane>
 	</a-marker>
 
 		<a-marker type='barcode' value='1'>
-	     <a-sphere position="0 .5 0" radius="0.5" color="#EF2D5E"></a-sphere>
-	     <a-plane position="0 0 0" rotation="-90 0 0" width="1" height="1" color="#7BC8A4"></a-plane>
+	     <!-- <a-sphere position="0 .5 0" radius="0.5" color="#EF2D5E"></a-sphere> -->
+	     <a-plane position="0 0 0" rotation="-90 0 0" width=".1" height=".1" color="#7BC8A4"></a-plane>
 	</a-marker>
 
 		<a-marker type='barcode' value='2'>
-	     <a-sphere position="0 .5 0" radius="0.5" color="#EF2D5E"></a-sphere>
-	     <a-plane position="0 0 0" rotation="-90 0 0" width="1" height="1" color="#7BC8A4"></a-plane>
+	     <!-- <a-sphere position="0 .5 0" radius="0.5" color="#EF2D5E"></a-sphere> -->
+	     <a-plane position="0 0 0" rotation="-90 0 0" width=".1" height=".1" color="#7BC8A4"></a-plane>
 	</a-marker>
 
 		<a-marker type='barcode' value='3'>
-	     <a-sphere position="0 .5 0" radius="0.5" color="#EF2D5E"></a-sphere>
-	     <a-plane position="0 0 0" rotation="-90 0 0" width="1" height="1" color="#7BC8A4"></a-plane>
+	     <!-- <a-sphere position="0 .5 0" radius="0.5" color="#EF2D5E"></a-sphere> -->
+	     <a-plane position="0 0 0" rotation="-90 0 0" width=".1" height=".1" color="#7BC8A4"></a-plane>
 	</a-marker>
 
 		<a-marker type='barcode' value='4'>
-	     <a-sphere position="0 .5 0" radius="0.5" color="#EF2D5E"></a-sphere>
-	     <a-plane position="0 0 0" rotation="-90 0 0" width="1" height="1" color="#7BC8A4"></a-plane>
+	     <!-- <a-sphere position="0 .5 0" radius="0.5" color="#EF2D5E"></a-sphere> -->
+	     <a-plane position="0 0 0" rotation="-90 0 0" width=".1" height=".1" color="#7BC8A4"></a-plane>
 	</a-marker>
 
 		<a-marker type='barcode' value='5'>
-	     <a-sphere position="0 .5 0" radius="0.5" color="#EF2D5E"></a-sphere>
-	     <a-plane position="0 0 0" rotation="-90 0 0" width="1" height="1" color="#7BC8A4"></a-plane>
+	     <!-- <a-sphere position="0 .5 0" radius="0.5" color="#EF2D5E"></a-sphere> -->
+	     <a-plane position="0 0 0" rotation="-90 0 0" width=".1" height=".1" color="#7BC8A4"></a-plane>
 	</a-marker>
 
 		<a-marker type='barcode' value='6'>
-	     <a-sphere position="0 .5 0" radius="0.5" color="#EF2D5E"></a-sphere>
-	     <a-plane position="0 0 0" rotation="-90 0 0" width="1" height="1" color="#7BC8A4"></a-plane>
+	     <!-- <a-sphere position="0 .5 0" radius="0.5" color="#EF2D5E"></a-sphere> -->
+	     <a-plane position="0 0 0" rotation="-90 0 0" width=".1" height=".1" color="#7BC8A4"></a-plane>
 	</a-marker>
 
 
 	<a-marker type='barcode' value='7'>
-	     <a-sphere position="0 .5 0" radius="0.5" color="#EF2D5E"></a-sphere>
-	     <a-plane position="0 0 0" rotation="-90 0 0" width="1" height="1" color="#7BC8A4"></a-plane>
+	     <!-- <a-sphere position="0 .5 0" radius="0.5" color="#EF2D5E"></a-sphere> -->
+	     <a-plane position="0 0 0" rotation="-90 0 0" width=".1" height=".1" color="#7BC8A4"></a-plane>
 	</a-marker>
 
 	<a-sphere id="ball" position="0 .5 0" radius="0.5" color="#EF005E"></a-sphere>
 
 	<a-plane id="debug" position="0 0 0" rotation="0 0 0" width="1" height="1" color="#7BC800">
-		 <a-sphere position="0 .8 0" id="sphereFriend" radius="0.5" color="#1F2D5E"></a-sphere>
-		 <a-entity id="h" position="14.550000000000002 0 4.39" rotation="0 90 0" scale="0.1532 0.1532 0.1532" visible="true"></a-entity>
+		 <!-- <a-sphere position="0 .8 0" id="sphereFriend" radius="0.5" color="#1F2D5E"></a-sphere> -->
+		 <a-entity id="h" position="14.20000000000002 0 6.810" rotation="0 90 0" scale="0.1532 0.1532 0.1532" visible="true"></a-entity>
 <!-- 		 <a-plane id="h" position="0 0 0" rotation="0 0 0" width="1" height="1" color="#7BC800"> -->
 	</a-plane>
 
