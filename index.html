@@ -399,7 +399,12 @@ AFRAME.registerComponent('gamecontroller', {
 		//avgYa = avgYa / markerCount;
 		//avgZa = avgZa / markerCount;
 
-		debug.setAttribute('position',{x: avgX, y: avgY, z: avgZ});
+		pushPosition(new THREE.Vector3(avgX, avgY, avgZ));
+		var combinedPosition = getPosition();
+
+
+		//debug.setAttribute('position',{x: avgX, y: avgY, z: avgZ});
+		debug.setAttribute('position',{x: combinedPosition.x, y: combinedPosition.y, z: combinedPosition.z});
 		//debug.object3D.rotation.set(avgXa,avgYa,avgZa);
 
 		//debug.object3D.position.set(markerList[0].object3D.position.x,markerList[0].object3D.position.y,markerList[0].object3D.position.z);
@@ -409,7 +414,11 @@ AFRAME.registerComponent('gamecontroller', {
 
 		//var rot = markerList[0].object3D.rotation.clone();
 		var rot = markerList[activeList[0]].object3D.rotation.clone();
-		debug.object3D.rotation.set(rot.x-.001,rot.y,rot.z);
+		pushRotation(rot);
+		var combinedRotation = getRotation();
+
+		//debug.object3D.rotation.set(rot.x-.001,rot.y,rot.z);
+		debug.object3D.rotation.set(combinedRotation.x,combinedRotation.y,combinedRotation.z);
 
 
 		//debug.object3D.rotation.set(markerList[0].object3D.rotation.x,markerList[0].object3D.rotation.y,markerList[0].object3D.rotation.z);
@@ -435,6 +444,52 @@ AFRAME.registerComponent('gamecontroller', {
   }
 
 });
+
+
+
+var factor = 20;
+var rotationMatrix = [];
+var positionMatrix = [];
+for(var i = 0; i<factor; i++){
+	var blank = new THREE.Vector3(0.0,0.0,0.0);
+	rotationMatrix.push(blank);
+	positionMatrix.push(blank);
+}
+function pushRotation(newRot){
+	for(var i = 0; i<factor-1; i++){
+		rotationMatrix[i] = rotationMatrix[i+1].clone();
+	}
+	rotationMatrix[factor-1] = newRot.clone();
+}
+function getRotation(){
+	var combined = new THREE.Vector3(0.0,0.0,0.0);
+	for(var i = 0; i<factor; i++){
+		combined.addVectors(combined,rotationMatrix[i].clone());
+	}
+	combined = combined.multiplyScalar(1/factor);
+	return combined;
+}
+
+function pushPosition(newPos){
+	for(var i = 0; i<factor-1; i++){
+		positionMatrix[i] = positionMatrix[i+1].clone();
+	}
+	positionMatrix[factor-1] = newPos.clone();
+}
+function getPosition(){
+	var combined = new THREE.Vector3(0.0,0.0,0.0);
+	for(var i = 0; i<factor; i++){
+		combined.addVectors(combined,positionMatrix[i].clone());
+	}
+	combined = combined.multiplyScalar(1/factor);
+	return combined;
+}
+
+
+
+
+
+
 
 
 /*
@@ -521,8 +576,8 @@ function grab(){
 <body style='margin : 0px; overflow: hidden; font-family: Monospace;'>
 
 <div style='position: fixed; top: 10px; width:inherit; text-align: center; z-index: 1;'>
-	Listen 2 America - AR Talk Radio Explorer
-	<p id="infoDisplay">Station Info</p>
+	<p style="color: #000000; background-color: #ffffff"> Listen 2 America - AR Talk Radio Explorer </p>
+	<p id="infoDisplay" style="color: #000000; background-color: #ffffff">Station Info</p>
 
 	<input id="calibrate" type="button" value="calibrate" onclick="grab();" />
 	<audio id="actual" controls>
