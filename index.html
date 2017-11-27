@@ -346,8 +346,10 @@ AFRAME.registerComponent('gamecontroller', {
   	//look through each marker
 	var markerList = document.querySelectorAll('a-marker');
 	var markerCount = 0;
+	var activeList = [];
 	for(i = 0; i<markerList.length; i++){
 		if(markerList[i].object3D.visible){
+			activeList.push(i);
 			markerCount = markerCount + 1;
 
 			var original = new THREE.Object3D();
@@ -405,7 +407,8 @@ AFRAME.registerComponent('gamecontroller', {
 		
 
 
-		var rot = markerList[0].object3D.rotation.clone();
+		//var rot = markerList[0].object3D.rotation.clone();
+		var rot = markerList[activeList[0]].object3D.rotation.clone();
 		debug.object3D.rotation.set(rot.x-.001,rot.y,rot.z);
 
 
