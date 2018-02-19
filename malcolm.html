@@ -11,11 +11,16 @@
 	<a-entity position="0 0 5">
 	  <a-camera></a-camera>
 	</a-entity>
-  
-    <a-assets>
+
+<!--     <a-assets>
       <video id="greenscreenvideo" src="greenscreenTrim.mp4" loop autoplay muted />
-    </a-assets>
-    <a-entity material="shader: chromakey; src: #greenscreenvideo; color: 0.1 0.9 0.2" geometry="primitive: box"></a-entity>
+    </a-assets> -->
+    <!-- <a-entity material="shader: chromakey; src: #greenscreenvideo; color: 0.1 0.9 0.2" geometry="primitive: box"></a-entity>
+ -->
+
+		<a-video class="video" material="shader: chromakey; src: #gvideo; color: 0.1 0.9 0.2" webkit-playsinline playsinline></a-video>
   </a-scene>
+
+  <video id="gvideo" src="greenscreenTrim.mp4" loop autoplay muted />
 </body>
 </html>
