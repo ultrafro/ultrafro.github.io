@@ -7,6 +7,8 @@
   <script src="aframe-ar-custom.js"></script>
   <script src="https://unpkg.com/aframe-chromakey-material/dist/aframe-chromakey-material.min.js"></script>
   <script>
+
+
   	function start(){
   		console.log("starting video");
 		var videoEl = document.querySelector('#gvideo');
@@ -19,7 +21,7 @@
 
 </head>
 
-<body style='margin : 0px; overflow: hidden;'>
+<body style='margin : 0px; overflow: hidden;' onclick="start()">
 
 	<div style='position: fixed; top: 10px; width:inherit; text-align: center; z-index: 1;'>
 		<button onclick="start()">Point at Fist and Press Me.</button>
@@ -42,11 +44,17 @@
     <!-- <a-entity material="shader: chromakey; src: #greenscreenvideo; color: 0.1 0.9 0.2" geometry="primitive: box"></a-entity>
  -->
 
-		<a-video class="video" position='0.0 0.0 0' rotation='-90.0 0.0 0.0' material="shader: chromakey; src: #gvideo; color: 0.1 0.9 0.2" webkit-playsinline playsinline></a-video>
+		<a-video class="video" id="tvideo" position='0.0 0.0 0' rotation='-90.0 0.0 0.0' material="shader: chromakey; src: #gvideo; color: 0.1 0.9 0.2" webkit-playsinline playsinline></a-video>
   </a-scene>
 
   <video id="gvideo" src="output2.mp4" loop controls >
 
+  <script>
+  	  //document.body.addEventListener('click', start(), true); 
+  	  //document.onclick = start();
+//	  document.getElementById("tvideo").addEventListener('click',start());
+
+  </script>
 
 </body>
 </html>
