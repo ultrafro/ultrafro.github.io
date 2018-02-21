@@ -9,11 +9,103 @@
   <script>
 
 
+
+
+  var im_list;
+  var quote_list;
+
+  var count;
+
   	function start(){
   		console.log("starting video");
+      im_list = ['malcolm1.jpg','malcolm2.jpg','malcolm3.jpg','malcolm4.jpg','malcolm5.jpg'];
+      quote_list = ['Education is the passport to the future, \n for tomorrow belongs to those who prepare for it today.', 'If you dont stand for something \n you will fall for anything.','If youre not careful, the newspapers will have you hating the people \n who are being oppressed, and loving the people who are doing the oppressing.','You cant separate peace from freedom because \n no one can be at peace unless he has his freedom.','Im for truth, no matter who tells it. \n Im for justice, no matter who its for or against.'];
+      count = 0;
 		var videoEl = document.querySelector('#gvideo');
 		videoEl.play();
+    //story();
+    
+
+    videoEl.onended = function(){
+      console.log('video endend');
+      story();
+      //spin();
+    }
+
+
+
+    function story(){
+      document.getElementById("boxy").setAttribute("visible",true);
+      if(count < im_list.length){
+        im = im_list[count];
+        quote = quote_list[count];
+        document.getElementById("boxy").setAttribute("src",im);
+        document.getElementById("txt").setAttribute("value" ,quote);
+        console.log("setting boxy to: " + im);      
+        document.getElementById("anim").setAttribute("dur", 7000);
+        document.getElementById("x").emit("startAnimation"); 
+        setTimeout(function(){document.getElementById("x").emit("stopAnimation"); story();}, 7000);
+        count++;        
+      }
+
+    }
+
+/*
+      console.log(im_list);
+      for(var i = 0; i<im_list.length; i++){
+        var im_list_copy = im_list.slice(0);
+        var im = im_list_copy[i];
+        console.log('im outside = ' + im);
+         setTimeout(function(){
+            console.log(im);
+            document.getElementById("boxy").setAttribute("src",im);
+            console.log("setting boxy to: " + im);
+            document.getElementById("anim").setAttribute("dur", 3000);
+            document.getElementById("x").emit("startAnimation");  
+            //anim.emit("startAnimation");      
+            setTimeout(function(){document.getElementById("x").emit("stopAnimation");}, 3000);
+         }, 3000*i, im.slice(0));
+      }
+
+
+    }
+    */
+    //document.getElementById('gvideo').addEventListener('ended',spin(),false);
+  
+    //spinSlow();
+
+/*
+      var anim = document.createElement('a-animation');
+      anim.setAttribute('attribute',"rotation");
+      anim.setAttribute('dur',"3000");
+      //target rotation:
+      var targetY = document.getElementById("x").getAttribute('rotation').y;
+      var targetZ = document.getElementById("x").getAttribute('rotation').z;
+      var targetString = "360 " + targetY + " " + targetZ;
+      anim.setAttribute('to',targetString);
+      anim.setAttribute('repeat',"indefinite");
+      anim.setAttribute('easing',"linear");
+      anim.setAttribute('begin',"startAnimation");
+      anim.setAttribute('end',"stopAnimation");
+      document.getElementById("x").appendChild(anim);
+*/
+
   	}
+
+    function spinSlow(){
+      document.getElementById("anim").setAttribute("dur", 60000);
+      document.getElementById("x").emit("startAnimation");  
+      //anim.emit("startAnimation");      
+      setTimeout(function(){document.getElementById("x").emit("stopAnimation");}, 60000);
+    }
+
+    function spin(){
+
+      document.getElementById("anim").setAttribute("dur", 3000);
+      document.getElementById("x").emit("startAnimation");  
+      //anim.emit("startAnimation");      
+      setTimeout(function(){document.getElementById("x").emit("stopAnimation");}, 3000);
+    }
 
   </script>
 
@@ -46,9 +138,21 @@
  -->
 
 		<a-video class="video" id="tvideo" position='0.0 0.0 0.0' rotation='-90.0 0.0 0.0' material="shader: chromakey; src: #gvideo; color: 0.1 0.9 0.2" webkit-playsinline playsinline></a-video>
+
+    <a-assets>
+      <a-asset-item id="x-obj" src="x.obj" position='0.0 0.0 0.0' scale='1 1 1'></a-asset-item>
+    </a-assets>
+    
+
+    <a-entity id="x" obj-model="obj: #x-obj" rotation='0 -90.0 90.0' position="0 -0.023 0.939" scale=".6 .6 .6" material="color: green">
+      <a-box id="boxy" src="malcolm1.jpg"  scale="0.040, 1, 1" position="0.0 1.530 0.0" visible="false"></a-box>  
+      <a-animation id="anim" attribute="rotation" dur="3000" to="360 -90 90" repeat="indefinite" easing="linear" begin="startAnimation" end="stopAnimation"></a-animation>
+    </a-entity>
+    <a-text id='txt' position="0.0 0.0 1.930" rotation="-90.0 0.0 0.0" value="In memory of Malcolm X \n (May 19, 1925 - Feb 21, 1965)" align="center" scale="" visible="" text=""></a-text>
+
   </a-scene>
 
-  <video id="gvideo" src="output2.mp4" loop controls playsinline >
+  <video id="gvideo" src="output3.mp4" controls playsinline >
 
   <script>
   	  //document.body.addEventListener('click', start(), true); 
