@@ -1,0 +1,74 @@
+<html>
+<head>
+<!-- <script src="https://www.youtube.com/player_api"></script>
+ -->
+
+</head>
+
+<body>
+<script>
+
+
+	var player1;
+	var player2;
+
+			// 2. This code loads the IFrame Player API code asynchronously.
+		var tag = document.createElement('script');
+		tag.src = "https://www.youtube.com/player_api";
+		var firstScriptTag = document.getElementsByTagName('script')[0];
+		firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+	document.onreadystatechange = function () {
+	  var state = document.readyState;
+	  if (state == 'interactive') {
+	      start();
+	  }
+	}; 
+
+
+	function start(){
+		console.log('starting!');
+
+
+	}
+
+	function onYouTubeIframeAPIReady(){
+				player1 = new YT.Player(document.getElementById('v1'), {
+          height: '50%',
+          width: '50%',
+          videoId: 'GOHH4JI4_9U',
+          events: {}
+        });
+		player2 = new YT.Player('v2', {
+          height: '50%',
+          width: '50%',
+          videoId: 'Zd3FWCPtboA',
+          events: {          }
+        });
+	}
+
+
+    function updateSlider(slideAmount) {
+        var sliderDiv = document.getElementById("sliderAmount");
+        //var player = document.getElementById("v1");
+        //player.stopVideo();
+        player1.stopVideo();
+
+    }
+</script>
+<div id="cool" style="position: relative; width: 100%; height: 0; padding-bottom: 56.5%;">
+		<iframe style="position: absolute; top:0; left: 0; width: 50%; height: 50%" id="v1" src="https://www.youtube.com/embed/GOHH4JI4_9U?autoplay=1&start=1716" frameborder="0" allow="autoplay; encrypted-media" enablejsapi="1" allowfullscreen></iframe>
+		<iframe style="position: absolute; top:0%; left: 50%; width: 50%; height: 50%" id="v2"  src="https://www.youtube.com/embed/Zd3FWCPtboA?autoplay=1&start=1000&mute=1&showinfo=0&controls=0" frameborder="0" allow="autoplay; encrypted-media"  enablejsapi="1" allowfullscreen></iframe>
+
+</div>
+
+<div>
+
+<input style="position: absolute; top: 60%; width: 85%" type="range" min="40" max="100" value="3600" class="slider" id="myRange" onchange="updateSlider(this.value)">
+
+</div>
+
+
+</body>
+
+</html>
